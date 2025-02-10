@@ -1,0 +1,176 @@
+<html>
+
+<head>
+    <title>Timer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body class="background-gradient">
+    <div id="emergency-full-screen" class="emergency-full-screen hidden-status"></div>
+    <div class="container">
+        <div class="left-section">
+            <div class="left-section-col-1 display-area"></div>
+            <div class="left-section-col-2">
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+                <div class="horizontal-bar"></div>
+            </div>
+        </div>
+        <div class="timer">
+            <div class="left-timer">
+                <div class="left-timer-row-1">
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-bottom"></div>
+                </div>
+                <div class="left-timer-row-2">
+                    <div>
+                        <span></span>
+                        <span class="vertical-bar-border-top-bottom"></span>
+                        <span class="vertical-bar-border-top-bottom"></span>
+                        <span></span>
+                        <span class="vertical-bar-border-bottom"></span>
+                        <span class="vertical-bar-border-bottom"></span>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="left-timer-row-3"></div>
+                <div class="left-timer-row-4"></div>
+                <div class="left-timer-row-5"></div>
+            </div>
+            <div class="remain-time">
+                <div class="above-remain-time-label">
+                    <div class="vertical-bar-border-top-bottom"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top-bottom"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top"></div>
+                </div>
+                <div class="remain-time-label">
+                    <div class="time-label-row-1-col-1 display-area">
+                        <span id="remaining-label-jp">活動限界まで</span>
+                    </div>
+                    <div class="time-label-row-1-col-2">
+                        <span></span>
+                        <span class="display-area">
+                            <span id="remaining-label-en"> ACTIVE TIME REMAINING:</span>
+                        </span>
+                    </div>
+                    <div class="time-label-row-2-col-1 display-area">
+                        <span id="after-label-jp">あと</span>
+                    </div>
+                    <div class="time-label-row-2-col-2 display-area">
+                        <span>
+                            <input class="display-area" id="input-minute" type="number" required min="0"
+                                placeholder="minutes" />
+                        </span>
+                        <span>
+                            <input class="display-area" id="input-second" type="number" required min="0"
+                                placeholder="second" />
+                        </span>
+                    </div>
+                </div>
+                <div class="time display-area" id="time-display">
+                    <div class="left-time-area"></div>
+                    <div class="minute-sencond-area">
+                        <span id="current-minute">00</span>:<span id="current-second">00</span>
+                    </div>
+                    <div class="milisencond-area">
+                        <span>:</span><span id="current-milisecond">00</span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div></div>
+                    <div>
+                        <button id="stop-button" class="display-area button">
+                            <div>S T O P</div>
+                            <div class="section-below-title active-control"></div>
+                        </button>
+                    </div>
+                    <div>
+                        <button id="start-button" class="display-area button">
+                            <div>S T A R T</div>
+                            <div class="section-below-title active-control"></div>
+                        </button>
+                    </div>
+                    <div>
+                        <button id="countdown-button" class="display-area button">
+                            <div>D O W N</div>
+                            <div class="section-below-title">U P T O</div>
+                        </button>
+                    </div>
+                    <div>
+                        <button id="reset-button" class="display-area button">
+                            <div>R E S E T</div>
+                            <div class="section-below-title active-control"></div>
+                        </button>
+                    </div>
+                </div>
+                <div class="blank-section">
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="energy-section">
+                <div class="energy-section-row-1">
+                    <div class="vertical-bar-border-top-bottom"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-top"></div>
+                    <div class="vertical-bar-border-bottom"></div>
+                </div>
+                <div class="energy-section-row-2 display-area">
+                    <div id="internal-energy" class="internal-energy">
+                        <div class="japanese-internal-energy">内部</div>
+                        <div class="vietnamese-internal-energy">INTERNAL</div>
+                        <div class="image-internal-energy">
+                            <img src="./images/image_energy.jpg"></img>
+                        </div>
+                    </div>
+                    <div id="main-energy" class="main-energy">
+                        <div class="japanese-main-energy">主電源供給システム</div>
+                        <div class="vietnamese-main-energy">MAIN ENERGY SUPPLY SYSTEM</div>
+                    </div>
+                    <div id="external-energy" class="external-energy">
+                        <div class="japanese-external-energy">外部</div>
+                        <div class="vietnamese-external-energy">EXTERNAL</div>
+                        <div id="image-external" class="image-external-energy">
+                            <img src="./images/image_energy.jpg"></img>
+                        </div>
+                    </div>
+                </div>
+                <div class="energy-section-row-3">
+                    <div class="energy-section-row-3-child-1"></div>
+                    <div class="energy-section-row-3-child-2">
+                        <div id="danger-emergency" class="danger-emergency-section display-area hidden-status">
+                            <div>DANGER</div>
+                            <div>EMERGENCY</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="energy-section-row-4">
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="vertical-bar-border-top"></div>
+            <div class="vertical-bar-border-top"></div>
+        </div>
+    </div>
+</body>
+<script src="main.js"></script>
+</body>
+
+</html>

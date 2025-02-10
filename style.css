@@ -1,0 +1,619 @@
+@font-face {
+    font-family: "japanese-font";
+    font-style: normal;
+    src: url("./fonts/SourceHanSerif-Heavy.otf") format("OpenType");
+}
+
+@font-face {
+    font-family: "vietnamese-font";
+    font-style: normal;
+    src: url("./fonts/LinotypeAroma.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "digital-font";
+    font-style: normal;
+    src: local("7segment"), url("/fonts/7segment.woff") format("woff"),
+        url("/fonts/7segment.ttf") format("truetype");
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in-effect {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out-effect {
+    opacity: 1;
+    animation: fadeOut 0.6s ease-in-out;
+}
+
+.background-gradient {
+    background: linear-gradient(120deg, rgba(243, 132, 21, 1) 0%, rgba(253, 255, 0, 1) 30%, rgba(99, 245, 95, 1) 60%);
+}
+
+.background-red {
+    background-color: red;
+}
+
+.display-area {
+    background-color: black;
+    color: yellow;
+}
+
+.display-area-red {
+    background-color: black;
+    color: red;
+}
+
+.hidden-status {
+    visibility: hidden;
+}
+
+.text-color-black {
+    color: black;
+}
+
+.emergency-full-screen {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url("./images/warning.png");
+    opacity: 0;
+    z-index: 9999;
+}
+
+.container {
+    position: fixed;
+    display: grid;
+    min-height: 100vh;
+    grid-template-columns: 5vw 85vw 9vw;
+    grid-template-rows: 1fr 75vh 15vh;
+
+    .left-section {
+        grid-row-start: 1;
+        grid-row-end: 4;
+        grid-column-start: 1;
+        display: grid;
+        grid-template-columns: 0.5vw 1fr;
+
+        .left-section-col-1 {
+            grid-column-start: 1;
+            display: grid;
+        }
+
+        .left-section-col-2 {
+            grid-column-start: 2;
+            display: grid;
+            grid-template-rows: repeat(12 1fr);
+            padding: 0.5vw;
+            background-color: transparent;
+        }
+    }
+
+    .timer {
+        grid-template-columns: 1fr 50vw 22vw;
+        grid-template-rows: 10vh 80vh 1fr;
+        display: grid;
+        grid-row-start: 1;
+        grid-row-end: 4;
+        grid-column-start: 2;
+
+        .left-timer {
+            display: grid;
+            grid-row-start: 1;
+            grid-row-end: 4;
+            grid-column-start: 1;
+            grid-template-rows: 1fr 17vh 37vh 15vh 15vh;
+
+            .left-timer-row-1 {
+                grid-row-start: 1;
+                display: grid;
+                grid-template-columns: 1fr repeat(2, 2.5rem);
+            }
+
+            .left-timer-row-2 {
+                display: grid;
+                grid-template-columns: 1fr 3vw;
+                grid-template-rows: 15vh 1fr;
+                grid-row-start: 2;
+
+                div:nth-child(1) {
+                    grid-column-start: 1;
+                    grid-row-start: 1;
+                    display: grid;
+                    grid-template-columns: 1fr repeat(2, 0.8vw);
+                }
+
+                div:nth-child(2) {
+                    grid-column-start: 2;
+                    grid-row-start: 1;
+                    width: 0;
+                    border-top: 0rem solid transparent;
+                    border-right: 5.5rem solid black;
+                    border-left: 0rem solid transparent;
+                    border-bottom: 3.5rem solid transparent;
+                }
+            }
+
+            .left-timer-row-3 {
+                grid-row-start: 3;
+                transform: skewY(-65.5deg);
+                transform-origin: 100% 0;
+                display: grid;
+                border-left: 13.1vw solid transparent;
+                border-top: 37vh solid black;
+            }
+
+            .left-timer-row-4 {
+                grid-row-start: 4;
+            }
+
+            .left-timer-row-5 {
+                grid-row-start: 5;
+                width: 0;
+                margin-bottom: 0.7vw;
+                border-bottom: 14vh solid black;
+                border-left: 13.1vw solid transparent;
+            }
+        }
+
+        .remain-time {
+            display: grid;
+            grid-template-rows: 1fr 17vh 37vh 15vh 15vh;
+            grid-column-start: 2;
+            grid-row-start: 1;
+            grid-row-end: 4;
+
+            .above-remain-time-label {
+                grid-row-start: 1;
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .remain-time-label {
+                display: grid;
+                grid-template-columns: 1fr 34vw;
+                grid-template-rows: 1fr 1fr;
+                font-family: 'japanese-font';
+                grid-row-start: 2;
+
+                .time-label-row-1-col-1 {
+                    grid-column-start: 1;
+                    grid-row-start: 1;
+                    font-size: 2.5vw;
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: left;
+                }
+
+                .time-label-row-1-col-2 {
+                    display: grid;
+                    grid-template-rows: 2vh 1fr;
+                    grid-column-start: 2;
+                    grid-row-start: 1;
+
+                    span:nth-child(1) {
+                        grid-row-start: 1;
+                        width: 0;
+                        border-right: 0.5rem solid transparent;
+                        border-bottom: 0.5rem solid black;
+                        border-top: 0.5rem solid transparent;
+                        border-left: 0.5rem solid black;
+                    }
+
+                    span:nth-child(2) {
+                        grid-row-start: 2;
+                        grid-column-start: 1;
+                        font-size: 2vw;
+                        font-family: 'vietnamese-font';
+                    }
+                }
+
+                .time-label-row-2-col-1 {
+                    grid-column-start: 1;
+                    grid-row-start: 2;
+                    font-size: 2.5vw;
+                }
+
+                .time-label-row-2-col-2 {
+                    grid-column-start: 2;
+                    grid-row-start: 2;
+
+                    input {
+                        height: 80%;
+                        width: 40%;
+                        font-size: 1.5vw;
+                        border: none;
+                        border-bottom: 0.1rem solid yellow;
+                        background-color: black;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    }
+
+                    input:focus {
+                        outline: none;
+                    }
+
+                    .border-bottom-red {
+                        border-bottom: 0.1rem solid red;
+                    }
+                }
+            }
+
+            .time {
+                grid-row-start: 3;
+                display: grid;
+                grid-template-columns: 1fr 35vw 15vw;
+                font-family: 'digital-font';
+
+                .left-time-area {
+                    grid-column-start: 1;
+                }
+
+                .minute-sencond-area {
+                    grid-column-start: 2;
+                    font-size: 15vw;
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+                }
+
+                .milisencond-area {
+                    grid-column-start: 3;
+                    font-family: 'digital-font';
+                    font-size: 10vw;
+                    display: flex;
+                    align-items: flex-end;
+                    margin-bottom: 1vw;
+                }
+            }
+
+            .control {
+                grid-row-start: 4;
+                display: grid;
+                font-family: 'vietnamese-font';
+                grid-template-columns: 1fr 12vw 12vw 12Vw 12vw;
+
+                div:nth-child(1) {
+                    grid-template-columns: 1;
+                }
+
+                div:nth-child(2) {
+                    grid-template-columns: 2;
+                }
+
+                div:nth-child(3) {
+                    grid-template-columns: 3;
+                }
+
+                div:nth-child(4) {
+                    grid-template-columns: 4;
+                }
+
+                div:nth-child(5) {
+                    grid-template-columns: 5;
+                }
+
+                .button {
+                    display: grid;
+                    grid-template-rows: repeat(2, 1fr);
+                    margin: 0.5vw;
+                    font-size: 2vw;
+                    border-radius: 5%;
+                    color: red;
+                    cursor: pointer;
+                }
+
+                .disabled-button {
+
+                    color: black;
+                    cursor: not-allowed;
+
+                    .section-below-title {
+                        background-color: black;
+                        height: 80%;
+                        color: black;
+                    }
+
+                    .active-control:hover {
+                        background-color: black;
+                    }
+                }
+
+                .active-control:hover {
+                    background-color: hsla(360, 100%, 50%, 0.5);
+                }
+
+                .section-below-title {
+                    background-color: red;
+                    height: 80%;
+                    color: red;
+                }
+
+            }
+
+            .blank-section {
+                grid-row-start: 5;
+                background-color: transparent;
+                display: grid;
+                grid-template-rows: 1fr 10vh;
+
+                div:nth-child(1) {
+                    grid-row-start: 1;
+                    background-color: transparent;
+                    border-top: 1vw solid black;
+                    border-bottom: 0.5vw solid black;
+                }
+
+                div:nth-child(2) {
+                    grid-row-start: 2;
+                    background-color: black;
+                }
+            }
+        }
+
+        .energy-section {
+            display: grid;
+            grid-column-start: 3;
+            grid-row-start: 1;
+            grid-row-end: 4;
+            grid-template-rows: 1fr 52vh 15vh 15vh;
+
+            .energy-section-row-1 {
+                grid-row-start: 1;
+                display: grid;
+                grid-template-columns: repeat(3, 7vw) 1fr;
+            }
+
+            .energy-section-row-2 {
+                grid-row-start: 2;
+                display: grid;
+                grid-template-rows: 18vh 14vh 18vh;
+
+                .internal-energy {
+                    margin-top: 0.5vw;
+                    margin-right: 0.5vw;
+                    grid-row-start: 1;
+                    border: 1px solid red;
+                    display: grid;
+                    grid-template-columns: 12vw 1fr;
+                    grid-template-rows: 10vh 1fr;
+                    font-weight: bold;
+
+                    .japanese-internal-energy {
+                        grid-column-start: 1;
+                        grid-row-start: 1;
+                        font-family: 'japanese-font';
+                        font-size: 5vw;
+                        letter-spacing: 1vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .vietnamese-internal-energy {
+                        grid-column-start: 1;
+                        grid-row-start: 2;
+                        font-family: 'vietnamese-font';
+                        font-size: 2vw;
+                        letter-spacing: 0.3vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .image-internal-energy {
+                        grid-column-start: 2;
+                        grid-row-start: 1;
+                        grid-row-end: 3;
+                    }
+                }
+
+                .main-energy {
+                    margin-top: 0.5vw;
+                    margin-right: 0.5vw;
+                    grid-row-start: 2;
+                    border: 1px solid red;
+                    display: grid;
+                    grid-template-rows: 1fr 1fr;
+                    font-weight: bold;
+
+                    .japanese-main-energy {
+                        grid-row-start: 1;
+                        font-family: 'japanese-font';
+                        font-size: 2.3vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .vietnamese-main-energy {
+                        grid-row-start: 2;
+                        font-family: 'vietnamese-font';
+                        font-size: 1.5vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+
+                .external-energy {
+                    margin-top: 0.5vw;
+                    margin-right: 0.5vw;
+                    grid-row-start: 3;
+                    border: 1px solid red;
+                    display: grid;
+                    grid-template-columns: 12vw 1fr;
+                    grid-template-rows: 10vh 1fr;
+                    font-weight: bold;
+
+                    .japanese-external-energy {
+                        grid-column-start: 1;
+                        grid-row-start: 1;
+                        font-family: 'japanese-font';
+                        font-size: 5vw;
+                        letter-spacing: 1vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .vietnamese-external-energy {
+                        grid-column-start: 1;
+                        grid-row-start: 2;
+                        font-family: 'vietnamese-font';
+                        font-size: 2vw;
+                        letter-spacing: 0.3vw;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .image-external-energy {
+                        grid-column-start: 2;
+                        grid-row-start: 1;
+                        grid-row-end: 3;
+                    }
+
+                }
+
+                .hide-border {
+                    border: none;
+                }
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                }
+
+            }
+
+            .energy-section-row-3 {
+                grid-row-start: 3;
+                display: grid;
+                grid-template-rows: 2vh 1fr;
+
+                .energy-section-row-3-child-1 {
+                    grid-row-start: 1;
+                }
+
+                .energy-section-row-3-child-2 {
+                    grid-row-start: 2;
+                    background-color: black;
+                    display: grid;
+                    grid-template-columns: 11vw 1fr;
+
+                    .danger-emergency-section {
+                        grid-column-start: 1;
+                        margin: 0.5vw;
+                        border: 1px solid red;
+                        font-family: 'vietnamese-font';
+                        color: red;
+                        font-weight: bold;
+
+                        div:nth-child(1) {
+                            font-size: 2vw;
+                            letter-spacing: 0.3vw;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        div:nth-child(2) {
+                            font-size: 1.5vw;
+                            letter-spacing: 0.15vw;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                    }
+                }
+            }
+
+            .energy-section-row-4 {
+                grid-row-start: 4;
+                background-color: transparent;
+                display: grid;
+                grid-template-rows: 1fr 10vh;
+
+                div:nth-child(1) {
+                    grid-row-start: 1;
+                    background-color: transparent;
+                    border-top: 1vw solid black;
+                    border-bottom: 0.5vw solid black;
+                }
+
+                div:nth-child(2) {
+                    grid-row-start: 2;
+                    background-color: black;
+                }
+            }
+        }
+    }
+
+    .right-section {
+        grid-row-start: 1;
+        grid-row-end: 4;
+        grid-column-start: 3;
+        display: grid;
+        grid-template-columns: 1fr repeat(2, 1vw);
+    }
+
+    .horizontal-bar {
+        margin-right: 2.5vw;
+        border-top: 0.2vw solid black;
+        background: transparent;
+    }
+
+    .vertical-bar-border-top {
+        border-top: 0.6vw solid black;
+        background: transparent;
+        width: 0;
+        padding: 0.2vw;
+        background: transparent;
+    }
+
+    .vertical-bar-border-top-bottom {
+        border-top: 0.6vw solid black;
+        border-bottom: 0.6vw solid black;
+        background: transparent;
+        width: 0;
+        margin-bottom: 0.2vw;
+        padding: 0.2vw;
+        background: transparent;
+    }
+
+    .vertical-bar-border-bottom {
+        border-bottom: 0.6vw solid black;
+        background: transparent;
+        width: 0;
+        margin-bottom: 0.2vw;
+        padding: 0.2vw;
+        background: transparent;
+    }
+}
