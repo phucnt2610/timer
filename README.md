@@ -1,0 +1,2 @@
+- The timer can count up or count down
+- Written purely in HTML CSS JS without using libraries
