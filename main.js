@@ -1,349 +1,488 @@
-let remainingTime = null;
-let totalTime = null;
-let startTime = null;
-let timerId = null;
-let isCountdownTimer = true;
-let mainEnergyId = null;
-let emergencyFullScreenId = null
-let effect20Sec = null;
+class MyInputTimer {
+    constructor() {
+        this.inputMinutes = document.getElementById('input-minute');
+        this.inputSeconds = document.getElementById('input-second');
+    }
 
-let inputMinute = document.getElementById('input-minute');
-let inputSecond = document.getElementById('input-second');
-let displayArea = document.querySelectorAll('.display-area');
-let dangerEmergency = document.getElementById('danger-emergency');
-let externalEnergy = document.getElementById('external-energy');
-let imageExternal = document.getElementById('image-external');
-let mainEnergy = document.getElementById('main-energy');
-let internalEnergy = document.getElementById('internal-energy');
-let remainingLabelJp = document.getElementById('remaining-label-jp');
-let remainingLabelEn = document.getElementById('remaining-label-en');
-let afterLabelJp = document.getElementById('after-label-jp');
-let timeDisplay = document.getElementById('time-display');
-let emergencyFullScreen = document.getElementById('emergency-full-screen');
+    getInputMinute = () => {
+        return parseInt(this.inputMinutes.value) || 0;
+    }
 
-const startButton = document.getElementById('start-button');
-const resetButton = document.getElementById('reset-button');
-const stopButton = document.getElementById('stop-button');
-const countdownButton = document.getElementById('countdown-button');
-const divStartElements = startButton.querySelectorAll('div');
-const divStopElements = stopButton.querySelectorAll('div');
-const divCountdownElements = countdownButton.querySelectorAll('div');
+    getInputSecond = () => {
+        return parseInt(this.inputSeconds.value) || 0;
+    }
 
-const updateTimeText = (time) => {
-    let m = Math.floor(time / 60000);
-    let s = Math.floor((time % 60000) / 1000);
-    let ms = Math.floor((time % 1000) / 1000 * 30);
+    getTotalTime = () => {
+        return (this.getInputMinute() * 60 + this.getInputSecond()) * 1000;
+    }
+}
 
-    m = String(m).padStart(2, '0');
-    s = String(s).padStart(2, '0');
-    ms = String(ms).padStart(2, '0');
+class MyCurrentTime {
+    constructor() { }
 
-    setTimer(m, s, ms);
-};
-
-const setTimer = (m, s, ms) => {
-    document.getElementById("current-minute").textContent = m;
-    document.getElementById("current-second").textContent = s;
-    document.getElementById("current-milisecond").textContent = ms;
-};
-
-const update = () => {
-    timerId = requestAnimationFrame(() => {
-        const now = Date.now();
-        if (isCountdownTimer) {
-            remainingTime -= now - startTime;
+    getCurrentTime = (time, timeUnit) => {
+        if (timeUnit === 'minutes') {
+            let m = Math.floor(time / 60000);
+            m = String(m).padStart(2, '0');
+            return m;
+        } else if (timeUnit === 'seconds') {
+            let s = Math.floor((time % 60000) / 1000);
+            s = String(s).padStart(2, '0');
+            return s;
         } else {
-            remainingTime += now - startTime;
+            let ms = Math.floor((time % 1000) / 1000 * 30);
+            ms = String(ms).padStart(2, '0');
+            return ms;
         }
-        startTime = now;
-        let remainingTimeCountupto = totalTime - remainingTime;
-        if ((remainingTime > 0 && isCountdownTimer) || (remainingTimeCountupto > 0 && !isCountdownTimer)) {
-            if ((remainingTime < 20000 && remainingTime > 15000 && isCountdownTimer) ||
-                (remainingTimeCountupto < 20000 && remainingTimeCountupto > 15000 && !isCountdownTimer)) {
-                effect20Sec = true;
-                changeColorAction();
-                showDangerEmergency();
-                showEmergencyFullScreen();
-                showEffectExternal();
-            } else if ((remainingTime < 15000 && isCountdownTimer) || (remainingTimeCountupto < 15000 && !isCountdownTimer)) {
-                if (effect20Sec == null) {
-                    changeColorAction();
-                    showDangerEmergency();
-                    showEffectExternal();
-                }
-                showAndHideMainEnergy();
-            }
-            update();
+    }
+}
+
+class MyTimerUi {
+    constructor() {
+        this.myCurrentTime = new MyCurrentTime();
+
+        this.currentMinutes = document.getElementById('current-minute');
+        this.currentSeconds = document.getElementById('current-second');
+        this.currentMiliseconds = document.getElementById('current-milisecond');
+
+        this.startBtnActive = document.getElementById('start-btn-active');
+        this.startBtnText = document.getElementById('start-btn-text');
+
+        this.stopBtnActive = document.getElementById('stop-btn-active');
+        this.stopBtnText = document.getElementById('stop-btn-text');
+
+        this.countdownBtnActive = document.getElementById('countdown-btn-active');
+        this.countdownBtnText = document.getElementById('countdown-btn-text');
+    }
+
+    updateTimeText = (time) => {
+        this.currentMinutes.textContent = this.myCurrentTime.getCurrentTime(time, 'minutes');
+        this.currentSeconds.textContent = this.myCurrentTime.getCurrentTime(time, 'seconds');
+        this.currentMiliseconds.textContent = this.myCurrentTime.getCurrentTime(time, 'miliseconds');
+    }
+
+    startBtnClick = () => {
+        this.startBtnActive.classList.remove("active-control");
+        this.stopBtnActive.classList.add("active-control");
+    }
+
+    stopBtnClick = () => {
+        this.stopBtnActive.classList.remove("active-control");
+        this.startBtnActive.classList.add("active-control");
+    }
+
+    countdownBtnClick = (isCountdown) => {
+        if (isCountdown) {
+            this.countdownBtnText.classList.remove("active-control-count-btn");
+            this.countdownBtnActive.classList.add("active-control-count-btn");
         } else {
-            if (isCountdownTimer) {
-                remainingTime = 0;
+            this.countdownBtnText.classList.add("active-control-count-btn");
+            this.countdownBtnActive.classList.remove("active-control-count-btn");
+        }
+    }
+
+}
+
+class MyWarning20Sec {
+    constructor() {
+        this.myInputTimer = new MyInputTimer();
+        this.displayArea = document.querySelectorAll('.display-area');
+        this.warningFullScreenElement = document.getElementById('warning-full-screen');
+        this.warningFullScreenId = null;
+        this.externalEnergy = document.getElementById('external-energy');
+        this.imageExternal = document.getElementById('image-external');
+        this.dangerButton = document.getElementById('danger-emergency');
+    }
+
+    warningDisplayArea = (time) => {
+        if (time < 20000) {
+            this.displayArea.forEach(element => {
+                element.classList.add('display-area-red');
+            });
+        }
+    }
+
+    warningInputArea = (time) => {
+        if (time < 20000) {
+            this.myInputTimer.inputMinutes.classList.add('border-bottom-red');
+            this.myInputTimer.inputSeconds.classList.add('border-bottom-red');
+        }
+    }
+
+    warningBackground = (time) => {
+        if (time < 20000) {
+            document.body.classList.remove('background-gradient');
+            document.body.classList.add('background-red');
+        }
+    }
+
+    warningFullScreen = (time) => {
+        if (this.warningFullScreenId == null) {
+            if (time < 20000 && time > 15000) {
+                this.warningFullScreenElement.classList.remove('hidden-status');
+                this.warningFullScreenId = setInterval(() => {
+                    if (this.warningFullScreenElement.classList.contains('fade-out-effect')) { // show
+                        this.warningFullScreenElement.classList.add('fade-in-effect');
+                        this.warningFullScreenElement.classList.remove('fade-out-effect');
+                    } else { // hide
+                        this.warningFullScreenElement.classList.remove('fade-in-effect');
+                        this.warningFullScreenElement.classList.add('fade-out-effect');
+                    }
+                }, 500);
+            }
+        } else if (time < 15000) {
+            clearInterval(this.warningFullScreenId);
+            this.warningFullScreenId = null;
+            this.warningFullScreenElement.classList.add('hidden-status');
+        }
+    }
+
+    warningExternalEnergy = (time) => {
+        if (time < 20000) {
+            this.externalEnergy.classList.add('hide-border');
+            this.imageExternal.classList.add('hidden-status');
+        }
+    }
+
+    warningDangerButton = (time) => {
+        if (time < 20000) {
+            this.dangerButton.classList.remove('hidden-status');
+        }
+    }
+
+    clearWarningExternal = () => {
+        this.externalEnergy.classList.add('hidden-status');
+    }
+}
+
+class MyWarning15Sec {
+    constructor() {
+        this.mainEnergy = document.getElementById('main-energy');
+        this.mainEnergyId = null;
+    }
+
+    warningMainEnergy = (time) => {
+        if (this.mainEnergyId == null) {
+            if (time < 15000 || time == null) {
+                this.mainEnergyId = setInterval(() => {
+                    if (this.mainEnergy.classList.contains('hidden-status')) {
+                        this.mainEnergy.classList.remove('hidden-status');
+                    } else {
+                        this.mainEnergy.classList.add('hidden-status');
+                    }
+                }, 150);
+            }
+        }
+    }
+
+    clearWarningMainEnergy = () => {
+        clearInterval(this.mainEnergyId);
+        this.mainEnergyId = null;
+        this.mainEnergy.classList.remove('hidden-status');
+    }
+}
+
+class MyWarningTimeout {
+    constructor() {
+        this.myWarning20Sec = new MyWarning20Sec();
+        this.myInputTimer = new MyInputTimer();
+
+        this.internalEnergy = document.getElementById('internal-energy');
+        this.internalId = null;
+        this.dangerButtonId = null;
+
+        this.startButton = document.getElementById('start-button');
+        this.stopButton = document.getElementById('stop-button');
+        this.countdownButton = document.getElementById('countdown-button');
+
+        this.remainingLabelJp = document.getElementById('remaining-label-jp');
+        this.remainingLabelEn = document.getElementById('remaining-label-en');
+        this.afterLabelJp = document.getElementById('after-label-jp');
+        this.remainJpId = null;
+        this.remainEnId = null;
+        this.afterJpId = null;
+        this.timeDisplay = document.getElementById('time-display');
+    }
+
+    warningInternalEnergy = () => {
+        this.internalId = setInterval(() => {
+            if (this.internalEnergy.classList.contains('hidden-status')) {
+                this.internalEnergy.classList.remove('hidden-status');
             } else {
-                remainingTime = totalTime;
-            }
-
-            // effect time out
-            disableStartBtn();
-            disableCountdownBtn();
-            disableStopBtn()
-            showAndHideEffectTimeout();
-            hideExternalEnergyAfter3Sec();
-            hideTimeDisplay();
-        }
-        updateTimeText(remainingTime);
-    });
-};
-
-const startAction = () => {
-    if ((parseInt(inputMinute.value) || 0) == 0 && (parseInt(inputSecond.value) || 0) == 0) {
-        return;
-    } else {
-        if (timerId !== null) {
-            return;
-        }
-        startButton.disabled = true;
-        if (remainingTime != 0) {
-            startTime = Date.now();
-        }
-        divStartElements[1].classList.remove("section-below-title");
-        divStopElements[1].classList.add("section-below-title");
-        totalTime = ((parseInt(inputMinute.value) || 0) * 60 + (parseInt(inputSecond.value) || 0)) * 1000;
-        if (isCountdownTimer && remainingTime == null) {
-            remainingTime = totalTime;
-        }
-        update();
-    }
-};
-
-const stopAction = () => {
-    if (timerId === null) return;
-
-    startButton.disabled = false;
-    cancelAnimationFrame(timerId);
-    timerId = null;
-    divStopElements[1].classList.remove("section-below-title");
-    divStartElements[1].classList.add("section-below-title");
-};
-
-const resetAction = () => {
-    history.go(0);
-};
-
-const countDownAction = () => {
-    if (timerId === null && startButton.disabled === false) {
-        if (isCountdownTimer) {
-            divCountdownElements[0].classList.add('section-below-title');
-            divCountdownElements[1].classList.remove('section-below-title');
-            isCountdownTimer = false;
-        } else {
-            divCountdownElements[0].classList.remove('section-below-title');
-            divCountdownElements[1].classList.add('section-below-title');
-            isCountdownTimer = true;
-        }
-    }
-};
-
-const showAndHideEffectTimeout = () => {
-    clearEffectMainEnergy();
-    showAndHideMainEnergy();
-    showAndHideDangerEmergency();
-    showAndHideInternalEnergy();
-    showAndHideRemainingLabelJp();
-    showAndHideRemainingLabelEn();
-    showAndHideAfterLabelJp();
-}
-
-const changeColorAction = () => {
-    // change color display area
-    displayArea.forEach(element => {
-        element.classList.add('display-area-red');
-    });
-
-    // change color input border bottom
-    inputMinute.classList.add('border-bottom-red');
-    inputSecond.classList.add('border-bottom-red');
-
-    // change background color
-    document.body.classList.remove('background-gradient');
-    document.body.classList.add('background-red');
-}
-
-// Effect When Remaining Time Below 20s
-const showDangerEmergency = () => {
-    dangerEmergency.classList.remove('hidden-status');
-}
-
-const hideDangerEmergency = () => {
-    dangerEmergency.classList.add('hidden-status');
-}
-
-const showEffectExternal = () => {
-    externalEnergy.classList.add('hide-border');
-    imageExternal.classList.add('hidden-status');
-}
-
-const showEmergencyFullScreen = () => {
-    if (emergencyFullScreenId == null) {
-        emergencyFullScreen.classList.remove('hidden-status');
-
-        emergencyFullScreenId = setInterval(() => {
-            if (emergencyFullScreen.classList.contains('fade-out-effect')) { // show
-                emergencyFullScreen.classList.add('fade-in-effect');
-                emergencyFullScreen.classList.remove('fade-out-effect');
-            } else { // hide
-                emergencyFullScreen.classList.remove('fade-in-effect');
-                emergencyFullScreen.classList.add('fade-out-effect');
-            }
-        }, 500);
-
-        setTimeout(() => {
-            clearInterval(emergencyFullScreenId);
-            emergencyFullScreen.classList.add('hidden-status');
-            emergencyFullScreenId = null;
-        }, 5000);
-    }
-}
-
-// Effect When Remaining Time Below 15s
-const showAndHideMainEnergy = () => {
-    if (mainEnergyId == null) {
-        mainEnergyId = setInterval(() => {
-            if (mainEnergy.classList.contains('hidden-status')) {
-                mainEnergy.classList.remove('hidden-status');
-            } else {
-                mainEnergy.classList.add('hidden-status');
+                this.internalEnergy.classList.add('hidden-status');
             }
         }, 150);
-        if (remainingTime == 0 || remainingTime == totalTime) {
-            setTimeout(() => {
-                clearInterval(mainEnergyId);
-                mainEnergyId = null;
-                mainEnergy.classList.add('hidden-status');
-            }, 6000);
-        }
+
+        setTimeout(() => {
+            clearTimeout(this.internalId);
+            this.internalId = null;
+            this.internalEnergy.classList.add('hidden-status');
+        }, 5000);
+    }
+
+    warningDangerButton = () => {
+        this.dangerButtonId = setInterval(() => {
+            if (this.myWarning20Sec.dangerButton.classList.contains('hidden-status')) {
+                this.myWarning20Sec.dangerButton.classList.remove('hidden-status');
+            } else {
+                this.myWarning20Sec.dangerButton.classList.add('hidden-status');
+            }
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(this.dangerButtonId);
+            this.dangerButtonId = null;
+            this.myWarning20Sec.dangerButton.classList.add('hidden-status');
+        }, 4000);
+    }
+
+    disableStartBtn = () => {
+        this.startButton.disabled = true;
+        this.startButton.classList.add('disabled-button');
+    }
+
+    disableCountdownBtn = () => {
+        this.countdownButton.disabled = true;
+        this.countdownButton.classList.add('disabled-button');
+    }
+
+    warningRemainJp = () => {
+        this.remainJpId = setInterval(() => {
+            if (this.remainingLabelJp.classList.contains('hidden-status')) {
+                this.remainingLabelJp.classList.remove('hidden-status');
+            } else {
+                this.remainingLabelJp.classList.add('hidden-status');
+            }
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(this.remainJpId);
+            this.remainJpId = null;
+            this.remainingLabelJp.classList.add('hidden-status');
+        }, 7000);
+
+    }
+
+    warningRemainEn = () => {
+        this.remainEnId = setInterval(() => {
+            if (this.remainingLabelEn.classList.contains('hidden-status')) {
+                this.remainingLabelEn.classList.remove('hidden-status');
+            } else {
+                this.remainingLabelEn.classList.add('hidden-status');
+            }
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(this.remainEnId);
+            this.remainEnId = null;
+            this.remainingLabelEn.classList.add('hidden-status');
+        }, 7000);
+    }
+
+    warningAfterJp = () => {
+        this.afterJpId = setInterval(() => {
+            if (this.afterLabelJp.classList.contains('hidden-status')) {
+                this.afterLabelJp.classList.remove('hidden-status');
+            } else {
+                this.afterLabelJp.classList.add('hidden-status');
+            }
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(this.afterJpId);
+            this.afterJpId = null;
+            this.afterLabelJp.classList.add('hidden-status');
+
+
+        }, 7000);
+    }
+
+    clearInputTimer = () => {
+        setTimeout(() => {
+            this.myInputTimer.inputMinutes.classList.add('hidden-status');
+            this.myInputTimer.inputSeconds.classList.add('hidden-status');
+        }, 7000);
+
+    }
+
+    clearTimeDisplay = () => {
+        setTimeout(() => {
+            this.timeDisplay.classList.add('text-color-black');
+        }, 7500);
+    }
+
+    disableStopBtn = () => {
+        setTimeout(() => {
+            this.stopButton.disabled = true;
+            this.stopButton.classList.add('disabled-button');
+        }, 8000);
+
     }
 }
 
-const clearEffectMainEnergy = () => {
-    clearInterval(mainEnergyId);
-    mainEnergyId = null;
-    mainEnergy.classList.remove('hidden-status');
-}
+class MyTimer {
+    constructor() {
+        this.myInputTimer = new MyInputTimer();
+        this.myCurrentTime = new MyCurrentTime();
+        this.myTimerUi = new MyTimerUi();
+        this.myWarning20Sec = new MyWarning20Sec();
+        this.myWarning15Sec = new MyWarning15Sec();
+        this.myWarningTimeout = new MyWarningTimeout();
 
-// Effect When Timeout
-const disableStartBtn = () => {
-    startButton.disabled = true;
-    startButton.classList.add('disabled-button');
-}
-const disableCountdownBtn = () => {
-    countdownButton.disabled = true;
-    countdownButton.classList.add('disabled-button');
-}
+        this.startButton = document.getElementById('start-button');
+        this.stopButton = document.getElementById('stop-button');
+        this.countdownButton = document.getElementById('countdown-button');
+        this.resetButton = document.getElementById('reset-button');
 
-const hideExternalEnergyAfter3Sec = () => {
-    setTimeout(() => {
-        externalEnergy.classList.add('hidden-status');
-    }, 3000);
-}
+        this.timerId = null;
+        this.remainingTime = 0;
+        this.startTime = 0;
+        this.isCountdown = true;
 
-const showExternalEnergy = () => {
-    externalEnergy.classList.remove('hidden-status');
-}
+        this.startButton.addEventListener('click', () => {
+            this.startAction();
+        });
 
-const showAndHideDangerEmergency = () => {
-    let intervalId = setInterval(() => {
-        if (dangerEmergency.classList.contains('hidden-status')) {
-            dangerEmergency.classList.remove('hidden-status');
-        } else {
-            dangerEmergency.classList.add('hidden-status');
-        }
-    }, 150);
+        this.stopButton.addEventListener('click', () => {
+            this.stopActon();
+        });
 
-    setTimeout(() => {
-        clearInterval(intervalId);
-        dangerEmergency.classList.add('hidden-status');
-    }, 4000);
-}
+        this.resetButton.addEventListener('click', () => {
+            this.resetAction();
+        });
 
-const showAndHideInternalEnergy = () => {
-    let intervalId = setInterval(() => {
-        if (internalEnergy.classList.contains('hidden-status')) {
-            internalEnergy.classList.remove('hidden-status');
-        } else {
-            internalEnergy.classList.add('hidden-status');
-        }
-    }, 150);
-
-    setTimeout(() => {
-        clearInterval(intervalId);
-        dangerEmergency.classList.add('hidden-status');
-    }, 5000);
-}
-
-const showAndHideRemainingLabelJp = () => {
-    let intervalId = setInterval(() => {
-        if (remainingLabelJp.classList.contains('hidden-status')) {
-            remainingLabelJp.classList.remove('hidden-status');
-        } else {
-            remainingLabelJp.classList.add('hidden-status');
-        }
-    }, 150);
-
-    setTimeout(() => {
-        clearInterval(intervalId);
-        remainingLabelJp.classList.add('hidden-status');
-    }, 6500);
-}
-
-const showAndHideRemainingLabelEn = () => {
-    let intervalId = setInterval(() => {
-        if (remainingLabelEn.classList.contains('hidden-status')) {
-            remainingLabelEn.classList.remove('hidden-status');
-        } else {
-            remainingLabelEn.classList.add('hidden-status');
-        }
-    }, 150);
-
-    setTimeout(() => {
-        clearInterval(intervalId);
-        remainingLabelEn.classList.add('hidden-status');
-    }, 6500);
-}
-
-const showAndHideAfterLabelJp = () => {
-    let intervalId = setInterval(() => {
-        if (afterLabelJp.classList.contains('hidden-status')) {
-            afterLabelJp.classList.remove('hidden-status');
-        } else {
-            afterLabelJp.classList.add('hidden-status');
-        }
-    }, 150);
-
-    setTimeout(() => {
-        clearInterval(intervalId);
-        afterLabelJp.classList.add('hidden-status');
-        inputMinute.classList.add('hidden-status');
-        inputSecond.classList.add('hidden-status');
-    }, 6500);
-}
-
-const hideTimeDisplay = () => {
-    setTimeout(() => {
-        timeDisplay.classList.add('text-color-black');
-    }, 7500);
-}
-
-const disableStopBtn = () => {
-    setTimeout(() => {
-        stopButton.disabled = true;
-        stopButton.classList.add('disabled-button');
-    }, 8000);
-}
-
-(
-    () => {
-        startButton.addEventListener("click", startAction);
-        stopButton.addEventListener("click", stopAction);
-        resetButton.addEventListener("click", resetAction);
-        countdownButton.addEventListener('click', countDownAction);
+        this.countdownButton.addEventListener('click', () => {
+            this.countDownAction();
+        });
     }
-)();
+
+    startCountdown = () => {
+        this.timerId = requestAnimationFrame(() => {
+            const now = Date.now();
+            this.remainingTime -= now - this.startTime;
+            this.startTime = now;
+
+            if (this.remainingTime > 0) {
+                this.myWarning20Sec.warningDisplayArea(this.remainingTime);
+                this.myWarning20Sec.warningInputArea(this.remainingTime);
+                this.myWarning20Sec.warningBackground(this.remainingTime);
+                this.myWarning20Sec.warningFullScreen(this.remainingTime);
+                this.myWarning20Sec.warningExternalEnergy(this.remainingTime);
+                this.myWarning20Sec.warningDangerButton(this.remainingTime);
+                this.myWarning15Sec.warningMainEnergy(this.remainingTime);
+                this.startCountdown();
+            } else {
+                this.remainingTime = 0;
+                this.myWarning15Sec.clearWarningMainEnergy();
+                this.myWarning15Sec.warningMainEnergy();
+                this.myWarningTimeout.warningInternalEnergy();
+                this.myWarningTimeout.warningDangerButton();
+                this.myWarningTimeout.warningRemainJp();
+                this.myWarningTimeout.warningRemainEn();
+                this.myWarningTimeout.warningAfterJp();
+
+                this.myWarningTimeout.disableStartBtn();
+                this.myWarningTimeout.disableCountdownBtn();
+                this.myWarningTimeout.disableStopBtn();
+                setTimeout(() => {
+                    this.myWarning20Sec.clearWarningExternal();
+                }, 3000);
+
+                setTimeout(() => {
+                    this.myWarning15Sec.clearWarningMainEnergy();
+                    this.myWarning15Sec.mainEnergy.classList.add('hidden-status');
+                }, 6000);
+                this.myWarningTimeout.clearInputTimer();
+                this.myWarningTimeout.clearTimeDisplay();
+
+            }
+            this.myTimerUi.updateTimeText(this.remainingTime);
+        });
+    }
+
+    startCountup = () => {
+        this.timerId = requestAnimationFrame(() => {
+            const now = Date.now();
+            this.remainingTime += now - this.startTime;
+            this.startTime = now;
+            const remainingTimeCountup = this.myInputTimer.getTotalTime() - this.remainingTime;
+
+            if (this.remainingTime < this.myInputTimer.getTotalTime()) {
+                this.myWarning20Sec.warningDisplayArea(remainingTimeCountup);
+                this.myWarning20Sec.warningInputArea(remainingTimeCountup);
+                this.myWarning20Sec.warningBackground(remainingTimeCountup);
+                this.myWarning20Sec.warningFullScreen(remainingTimeCountup);
+                this.myWarning20Sec.warningExternalEnergy(remainingTimeCountup);
+                this.myWarning20Sec.warningDangerButton(remainingTimeCountup);
+                this.myWarning15Sec.warningMainEnergy(remainingTimeCountup);
+
+                this.startCountup();
+            } else {
+                this.remainingTime = this.myInputTimer.getTotalTime();
+                this.myWarning15Sec.clearWarningMainEnergy();
+                this.myWarning15Sec.warningMainEnergy();
+                this.myWarningTimeout.warningInternalEnergy();
+                this.myWarningTimeout.warningDangerButton();
+                this.myWarningTimeout.warningRemainJp();
+                this.myWarningTimeout.warningRemainEn();
+                this.myWarningTimeout.warningAfterJp();
+
+                this.myWarningTimeout.disableStartBtn();
+                this.myWarningTimeout.disableCountdownBtn();
+                this.myWarningTimeout.disableStopBtn();
+                setTimeout(() => {
+                    this.myWarning20Sec.clearWarningExternal();
+                }, 3000);
+                setTimeout(() => {
+                    this.myWarning15Sec.clearWarningMainEnergy();
+                    this.myWarning15Sec.mainEnergy.classList.add('hidden-status');
+                }, 6000);
+                this.myWarningTimeout.clearInputTimer();
+                this.myWarningTimeout.clearTimeDisplay();
+
+            }
+            this.myTimerUi.updateTimeText(this.remainingTime);
+        });
+    }
+
+    startAction = () => {
+        if (this.timerId != null || this.myInputTimer.getTotalTime() == 0) {
+            return;
+        } else {
+            if (this.isCountdown) {
+                if (this.timerId == null && this.remainingTime == 0) {
+                    this.remainingTime = this.myInputTimer.getTotalTime();
+                }
+                this.startTime = Date.now();
+                this.startCountdown();
+            } else {
+                this.startTime = Date.now();
+                this.startCountup();
+            }
+            this.myTimerUi.startBtnClick();
+        }
+    }
+
+    stopActon = () => {
+        if (this.timerId == null) return;
+        cancelAnimationFrame(this.timerId);
+        this.timerId = null;
+        this.myTimerUi.stopBtnClick();
+    }
+
+    countDownAction = () => {
+        if (this.remainingTime != 0) {
+            return;
+        }
+        if (this.isCountdown) {
+            this.isCountdown = false;
+        } else {
+            this.isCountdown = true;
+        }
+        this.myTimerUi.countdownBtnClick(this.isCountdown);
+    }
+
+    resetAction = () => {
+        history.go(0);
+    }
+}

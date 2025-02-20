@@ -4,10 +4,11 @@
     <title>Timer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="main.js"></script>
 </head>
 
 <body class="background-gradient">
-    <div id="emergency-full-screen" class="emergency-full-screen hidden-status"></div>
+    <div id="warning-full-screen" class="warning-full-screen hidden-status"></div>
     <div class="container">
         <div class="left-section">
             <div class="left-section-col-1 display-area"></div>
@@ -94,26 +95,26 @@
                     <div></div>
                     <div>
                         <button id="stop-button" class="display-area button">
-                            <div>S T O P</div>
-                            <div class="section-below-title active-control"></div>
+                            <div id="stop-btn-text">S T O P</div>
+                            <div id="stop-btn-active" class="active-control"></div>
                         </button>
                     </div>
                     <div>
                         <button id="start-button" class="display-area button">
-                            <div>S T A R T</div>
-                            <div class="section-below-title active-control"></div>
+                            <div id="start-btn-text">S T A R T</div>
+                            <div id="start-btn-active" class="active-control"></div>
                         </button>
                     </div>
                     <div>
                         <button id="countdown-button" class="display-area button">
-                            <div>D O W N</div>
-                            <div class="section-below-title">U P T O</div>
+                            <div id="countdown-btn-text">D O W N</div>
+                            <div id="countdown-btn-active" class="active-control-count-btn">U P T O</div>
                         </button>
                     </div>
                     <div>
                         <button id="reset-button" class="display-area button">
                             <div>R E S E T</div>
-                            <div class="section-below-title active-control"></div>
+                            <div class="active-control "></div>
                         </button>
                     </div>
                 </div>
@@ -169,8 +170,7 @@
             <div class="vertical-bar-border-top"></div>
         </div>
     </div>
-</body>
-<script src="main.js"></script>
+    <script>const myt = new MyTimer()</script>
 </body>
 
 </html>

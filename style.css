@@ -13,9 +13,8 @@
 @font-face {
     font-family: "digital-font";
     font-style: normal;
-    /* src: local("7segment"), url("/fonts/7segment.woff") format("woff"),
-        url("/fonts/7segment.ttf") format("truetype"); */
-    src: url("./fonts/7segment.ttf") format("truetype");
+    src: local("7segment"), url("/fonts/7segment.woff") format("woff"),
+        url("/fonts/7segment.ttf") format("truetype");
 }
 
 @keyframes fadeIn {
@@ -74,7 +73,7 @@
     color: black;
 }
 
-.emergency-full-screen {
+.warning-full-screen {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -334,7 +333,7 @@
                     color: black;
                     cursor: not-allowed;
 
-                    .section-below-title {
+                    .active-control {
                         background-color: black;
                         height: 80%;
                         color: black;
@@ -343,13 +342,25 @@
                     .active-control:hover {
                         background-color: black;
                     }
+
+                    .active-control-count-btn {
+                        background-color: black;
+                        height: 80%;
+                        color: black;
+                    }
                 }
 
                 .active-control:hover {
                     background-color: hsla(360, 100%, 50%, 0.5);
                 }
 
-                .section-below-title {
+                .active-control {
+                    background-color: red;
+                    height: 80%;
+                    color: red;
+                }
+
+                .active-control-count-btn {
                     background-color: red;
                     height: 80%;
                     color: red;
